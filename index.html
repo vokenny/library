@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library</title>
+
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <main>
+      <header><h1 id="title">Get chu sum NORLIDGE</h1></header>
+
+      <section id="library">
+        <h2>Library</h2>
+
+        <form id="new-book-form" action="" novalidate>
+          <fieldset>
+            <legend>Add a new book to the library</legend>
+
+            <label for="title-input">Title</label>
+            <input id="title-input" name="title" type="text" required />
+
+            <label for="author-input">Author</label>
+            <input id="author-input" name="author" type="text" required />
+
+            <label for="pages-input">Number of pages</label>
+            <input
+              id="pages-input"
+              name="pages"
+              type="number"
+              min="1"
+              step="1"
+              required
+            />
+
+            <label for="has-read-input">Have you read it?</label>
+            <input
+              id="has-read-check"
+              name="has-read"
+              type="checkbox"
+              required
+            />
+
+            <button id="add-new-book" type="submit">Add new book</button>
+            <button id="cancel-new-book">Cancel</button>
+          </fieldset>
+        </form>
+
+        <div id="shelves">
+          <!-- Books generated in here -->
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
