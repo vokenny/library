@@ -27,8 +27,6 @@
   }
 
   function addBookToLib(evt) {
-    evt.preventDefault();
-
     const formElems = evt.target.elements;
     const newBook = Object.create(Book);
     
@@ -62,5 +60,9 @@
 
   displayBooks();
 
-  newBookForm.addEventListener('submit', (evt) => { addBookToLib(evt), addBookToDisplay() });
+  newBookForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    addBookToLib(evt);
+    addBookToDisplay();
+  });
 }());
