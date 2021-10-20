@@ -11,7 +11,7 @@
   </head>
   <body>
     <main>
-      <header><h1 id="title">Get chu sum NORLIDGE</h1></header>
+      <header><h1 id="title">Get chu sum NOLLIDGE</h1></header>
 
       <section id="library">
         <h2>Library</h2>
@@ -21,11 +21,12 @@
             <legend>Add a new book to the library</legend>
 
             <label for="title-input">Title</label>
-            <input id="title-input" name="title" type="text" required />
+            <input id="title-input" name="title" type="text" maxlength="120" required />
 
             <label for="author-input">Author</label>
-            <input id="author-input" name="author" type="text" required />
+            <input id="author-input" name="author" type="text" maxlength="120" required />
 
+            <!-- See https://en.wikipedia.org/wiki/List_of_longest_novels for max number of pages -->
             <label for="pages-input">Number of pages</label>
             <input
               id="pages-input"
@@ -33,15 +34,16 @@
               type="number"
               min="1"
               step="1"
+              max="25000"
               required
             />
 
-            <label for="has-read-input">Have you read it?</label>
+            <label for="has-read-check">Have you read it?</label>
             <input
               id="has-read-check"
               name="has-read"
               type="checkbox"
-              required
+              value="has-read"
             />
 
             <button id="add-new-book" type="submit">Add new book</button>

@@ -1,6 +1,9 @@
 (function () {
   'use strict';
 
+  const newBookForm = document.querySelector('#new-book-form');
+  const shelves = document.querySelector('#shelves');
+
   let library = [
     {
       title: 'test',
@@ -13,12 +16,6 @@
       author: 'author',
       pages: 345,
       hasRead: true
-    },
-    {
-      title: 'test',
-      author: 'author',
-      pages: 234,
-      hasRead: false
     }
   ];
 
@@ -29,26 +26,41 @@
     this.hasRead = hasRead;
   }
 
-  function addBook() {
+  function addBookToLib(evt) {
+    evt.preventDefault();
+
+    const formElems = evt.target.elements;
     const newBook = Object.create(Book);
-    const title = prompt('title');
-    const author = prompt('author');
-    const pages = prompt('pages');
-    const hasRead = prompt('hasRead');
+    
+    newBook.title = formElems.title.value;
+    newBook.author = formElems.author.value;
+    newBook.pages = formElems.pages.value;
+    newBook.hasRead = formElems['has-read'].checked;
 
-    newBook.title = title;
-    newBook.author = author;
-    newBook.pages = pages;
-    newBook.hasRead = hasRead;
-
-    library = [...library, newBook];
+    library = library.concat(newBook);
   }
 
-  console.log(library);
+  function addBookToDisplay() {
+    const newBook = library.slice(-1)[0];
+    shelves.append(createBookElem(newBook));
+  }
 
-  addBook();
+  function createBookElem(book) {
+    const bookElem = document.createElement('div');
+    bookElem.classList.add('book');
 
-  console.log(library);
+    for (let prop in book) {
+      bookElem.innerHTML += `<p>${prop}: ${book[prop]}</p>`
+    }
 
-  document.querySelector('#new-book-form').addEventListener('submit', (evt) => evt.preventDefault());
+    return bookElem;
+  }
+
+  function displayBooks() {
+    library.forEach(book => shelves.append(createBookElem(book)));
+  }
+
+  displayBooks();
+
+  newBookForm.addEventListener('submit', (evt) => { addBookToLib(evt), addBookToDisplay() });
 }());

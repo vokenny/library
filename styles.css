@@ -1,0 +1,17 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+
+.book {
+  width: 100%;
+  height: auto;
+  border: 1px solid navy;
+  margin: 5px 0;
+  padding: 0 10px;
+}
