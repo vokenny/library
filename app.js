@@ -8,7 +8,7 @@
   const shelves = document.querySelector('#shelves');
   const bookIds = () => document.querySelectorAll('.book-id');
 
-  const booksOnDisplayById = () => Array.from(bookIds(), (id => id.textContent));
+  const booksOnDisplayById = () => Array.from(bookIds(), id => id.textContent);
 
   const library = () => localStorage.getItem('library') ? JSON.parse(localStorage.getItem('library')) : [];
 
@@ -71,15 +71,7 @@
     button.addEventListener('click', (evt) => {
       removeBookFromLib(evt);
       displayBooks();
-    });
-  }
-
-  function deleteRemoveEventListener(bookId) {
-    const button = document.querySelector('#remove-' + bookId);
-    button.removeEventListener('click', (evt) => {
-      removeBookFromLib(evt);
-      displayBooks();
-    });
+    }, { once: true });
   }
 
   function addBooksToDisplay() {
@@ -95,7 +87,6 @@
     const bookIdsToRemove = booksOnDisplayById().filter(id => !library().map(book => book.id).includes(id));
 
     bookIdsToRemove.forEach(id => {
-      deleteRemoveEventListener(id);
       const bookElem = document.querySelector('#book-' + id);
       bookElem.remove();
     })
