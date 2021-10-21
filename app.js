@@ -2,6 +2,8 @@
   'use strict';
 
   /* DOCUMENT SELECTORS */
+  const newBookExpander = document.querySelector('#new-book-button');
+  const newBookContainer = document.querySelector('#new-book-container');
   const newBookForm = document.querySelector('#new-book-form');
   const shelves = document.querySelector('#shelves');
   const bookIds = () => document.querySelectorAll('.book-id');
@@ -28,7 +30,7 @@
   function addBookToLib(evt) {
     const formElems = evt.target.elements;
     const newBook = Object.create(Book);
-    
+
     newBook.id = generateBookID();
     newBook.title = formElems.title.value;
     newBook.author = formElems.author.value;
@@ -52,14 +54,14 @@
     bookElem.setAttribute('id', 'book-' + book.id);
     bookElem.classList.add('book');
 
-    for (let prop in book) {
-      prop === 'id' 
-        // Attach a hidden book ID to the book element
-        ? bookElem.innerHTML += `<p class="book-id" hidden>${book[prop]}</p>`
-        : bookElem.innerHTML += `<p>${prop}: ${book[prop]}</p>`
+    for (let prop in book)
+    {
+      prop === 'id'
+        ? bookElem.innerHTML += `<p class="book-id">${ book[prop] }</p>`
+        : bookElem.innerHTML += `<p>${ prop }: ${ book[prop] }</p>`
     }
 
-    bookElem.innerHTML += `<button id="remove-${book.id}" class="button remove" value="${book.id}">Remove</button>`;
+    bookElem.innerHTML += `<button id="remove-${ book.id }" class="button secondary remove" value="${ book.id }">Remove</button>`;
 
     return bookElem;
   }
@@ -82,15 +84,15 @@
 
   function addBooksToDisplay() {
     const booksToAdd = library().filter(book => !booksOnDisplayById().includes(book.id));
-  
+
     booksToAdd.forEach(book => {
       shelves.prepend(createBookElem(book));
       addRemoveEventListener(book.id);
-    }); 
+    });
   }
 
   function removeBooksFromDisplay() {
-    const bookIdsToRemove = booksOnDisplayById().filter(id => !library().map(book => book.id).includes(id));  
+    const bookIdsToRemove = booksOnDisplayById().filter(id => !library().map(book => book.id).includes(id));
 
     bookIdsToRemove.forEach(id => {
       deleteRemoveEventListener(id);
@@ -104,8 +106,15 @@
     if (bookIds().length > library().length) removeBooksFromDisplay();
   }
 
+  function toggleNewBookForm() {
+    newBookContainer.style.display === 'block'
+      ? newBookContainer.style.display = 'none'
+      : newBookContainer.style.display = 'block';
+  }
+
   displayBooks();
 
+  newBookExpander.addEventListener('click', toggleNewBookForm);
   newBookForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     addBookToLib(evt);

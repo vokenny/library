@@ -8,10 +8,30 @@ html {
   padding: 0;
 }
 
+#new-book-button {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+#new-book-container {
+  display: none;
+}
+
 .book {
   width: 100%;
   height: auto;
   border: 1px solid navy;
   margin: 5px 0;
   padding: 0 10px;
+}
+
+.book-id {
+  display: none;
 }

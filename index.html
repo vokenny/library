@@ -1,58 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Library</title>
 
-    <link rel="stylesheet" href="./styles.css" />
-    <script defer src="./app.js"></script>
-  </head>
-  <body>
-    <main>
-      <header><h1 id="title">Get chu sum NOLLIDGE</h1></header>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library</title>
 
-      <section id="library">
-        <h2>Library</h2>
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="./app.js"></script>
+</head>
 
+<body>
+  <main>
+    <header>
+      <h1 id="title">Get chu sum NOLLIDGE</h1>
+    </header>
+
+    <section id="library">
+      <h2>Library</h2>
+
+      <button type="button" id="new-book-button">Add new book to the library</button>
+      <div id="new-book-container">
         <form id="new-book-form" action="" novalidate>
-          <fieldset>
-            <legend>Add a new book to the library</legend>
-
+          <div>
             <label for="title-input">Title</label>
             <input id="title-input" name="title" type="text" maxlength="120" required />
+          </div>
 
+          <div>
             <label for="author-input">Author</label>
             <input id="author-input" name="author" type="text" maxlength="120" required />
+          </div>
 
+          <div>
             <!-- See https://en.wikipedia.org/wiki/List_of_longest_novels for max number of pages -->
             <label for="pages-input">Number of pages</label>
-            <input
-              id="pages-input"
-              name="pages"
-              type="number"
-              min="1"
-              step="1"
-              max="25000"
-              required
-            />
+            <input id="pages-input" name="pages" type="number" min="1" step="1" max="25000" required />
+          </div>
 
+          <div>
             <label for="has-read-check">Have you read it?</label>
-            <input
-              id="has-read-check"
-              name="has-read"
-              type="checkbox"
-              value="has-read"
-            />
+            <input id="has-read-check" name="has-read" type="checkbox" value="has-read" />
+          </div>
 
-            <button id="add-new-book" class="button" type="submit">Add new book</button>
-            <button id="cancel-new-book" class="button" type="button">Cancel</button>
-          </fieldset>
+          <button id="add-new-book" class="button primary" type="submit">Add new book</button>
+          <button id="cancel-new-book" class="button secondary" type="button">Cancel</button>
         </form>
+      </div>
 
-        <div id="shelves"></div>
-      </section>
-    </main>
-  </body>
+      <div id="shelves"></div>
+    </section>
+  </main>
+</body>
+
 </html>
