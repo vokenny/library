@@ -6,6 +6,8 @@
   const shelves = document.querySelector('#shelves');
   const bookIds = () => document.querySelectorAll('.book-id');
 
+  const booksOnDisplayById = () => Array.from(bookIds(), (id => id.textContent));
+
   const library = () => localStorage.getItem('library') ? JSON.parse(localStorage.getItem('library')) : [];
 
   function generateBookID() {
@@ -38,8 +40,16 @@
     localStorage.setItem('library', JSON.stringify(newLibrary));
   }
 
+  function removeBookFromLib(evt) {
+    const bookId = evt.target.value;
+    const newLibrary = [...library().filter(book => book.id != bookId)];
+
+    localStorage.setItem('library', JSON.stringify(newLibrary));
+  }
+
   function createBookElem(book) {
     const bookElem = document.createElement('div');
+    bookElem.setAttribute('id', 'book-' + book.id);
     bookElem.classList.add('book');
 
     for (let prop in book) {
@@ -49,18 +59,49 @@
         : bookElem.innerHTML += `<p>${prop}: ${book[prop]}</p>`
     }
 
+    bookElem.innerHTML += `<button id="remove-${book.id}" class="button remove" value="${book.id}">Remove</button>`;
+
     return bookElem;
   }
 
-  function displayBooks() {
-    if (bookIds().length > 0) {
-      const bookIdsOnDisplay = Array.from(bookIds()).map(id => id.textContent);
-      const missingBooks = library().filter(book => !bookIdsOnDisplay.includes(book.id));
+  function addRemoveEventListener(bookId) {
+    const button = document.querySelector('#remove-' + bookId);
+    button.addEventListener('click', (evt) => {
+      removeBookFromLib(evt);
+      displayBooks();
+    });
+  }
 
-      missingBooks.forEach(book => shelves.prepend(createBookElem(book)));
-    } else {
-      library().forEach(book => shelves.prepend(createBookElem(book)));
-    }
+  function deleteRemoveEventListener(bookId) {
+    const button = document.querySelector('#remove-' + bookId);
+    button.removeEventListener('click', (evt) => {
+      removeBookFromLib(evt);
+      displayBooks();
+    });
+  }
+
+  function addBooksToDisplay() {
+    const booksToAdd = library().filter(book => !booksOnDisplayById().includes(book.id));
+  
+    booksToAdd.forEach(book => {
+      shelves.prepend(createBookElem(book));
+      addRemoveEventListener(book.id);
+    }); 
+  }
+
+  function removeBooksFromDisplay() {
+    const bookIdsToRemove = booksOnDisplayById().filter(id => !library().map(book => book.id).includes(id));  
+
+    bookIdsToRemove.forEach(id => {
+      deleteRemoveEventListener(id);
+      const bookElem = document.querySelector('#book-' + id);
+      bookElem.remove();
+    })
+  }
+
+  function displayBooks() {
+    if (bookIds().length < library().length) addBooksToDisplay();
+    if (bookIds().length > library().length) removeBooksFromDisplay();
   }
 
   displayBooks();
