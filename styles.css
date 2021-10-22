@@ -24,6 +24,10 @@ html {
   display: none;
 }
 
+.invalid {
+  border-color: red;
+}
+
 .book {
   width: 100%;
   height: auto;

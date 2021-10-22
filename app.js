@@ -29,26 +29,51 @@
 
   function isValidTitle(titleElem) {
     const value = titleElem.value;
+    if (!value || value?.length > 120) titleElem.classList.add('invalid');
 
     return value && value.length <= 120;
   }
 
-  function validateForm(evt) {
-    const formElems = evt.target.elements;
+  function isValidAuthor(authorElem) {
+    const value = authorElem.value;
+    if (!value || value?.length > 120) authorElem.classList.add('invalid');
 
-    isValidTitle(formElems.title)
-    // isValidAuthor(formElems.author)
-    // isValidPages(formElems.pages)
+    return value && value.length <= 120;
   }
 
-  function addBookToLib(evt) {
+  function isValidPages(pagesElem) {
+    const value = parseInt(pagesElem.value);
+    if (!(value > 0 && value <= 25000)) pagesElem.classList.add('invalid');
+
+    // See https://en.wikipedia.org/wiki/List_of_longest_novels for max number of pages
+    return value > 0 && value <= 25000;
+  }
+
+  function formatPages(value) {
+    return parseInt(value).toFixed(0);
+  }
+
+  function validateForm(evt) {
     const formElems = evt.target.elements;
+    Array.from(formElems).forEach(elem => elem.classList.remove('invalid'));
+
+    if (
+      isValidTitle(formElems.title) &&
+      isValidAuthor(formElems.author) &&
+      isValidPages(formElems.pages)
+    )
+    {
+      addBookToLib(formElems)
+    }
+  }
+
+  function addBookToLib(formElems) {
     const newBook = Object.create(Book);
 
     newBook.id = generateBookID();
     newBook.title = formElems.title.value;
     newBook.author = formElems.author.value;
-    newBook.pages = formElems.pages.value;
+    newBook.pages = formatPages(formElems.pages.value);
     newBook.hasRead = formElems['has-read'].checked;
 
     const newLibrary = [...library(), newBook];
@@ -147,7 +172,6 @@
   newBookForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     validateForm(evt);
-    addBookToLib(evt);
     displayBooks();
   });
 }());
