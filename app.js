@@ -81,9 +81,22 @@
     localStorage.setItem('library', JSON.stringify(newLibrary));
   }
 
+  function updateBookInLib(id) {
+    const newLibrary = library().map(book => {
+      return book.id === id
+        ? {
+          ...book,
+          hasRead: !book.hasRead
+        }
+        : book;
+    });
+
+    localStorage.setItem('library', JSON.stringify(newLibrary));
+  }
+
   function removeBookFromLib(evt) {
     const bookId = evt.target.value;
-    const newLibrary = [...library().filter(book => book.id != bookId)];
+    const newLibrary = [...library().filter(book => book.id !== bookId)];
 
     localStorage.setItem('library', JSON.stringify(newLibrary));
   }
@@ -92,18 +105,36 @@
     function createFieldElem(prop) {
       const newFieldElem = document.createElement('p');
 
-      if (prop === 'id')
+      switch (prop)
       {
-        newFieldElem.classList.add('book-id');
-        newFieldElem.textContent = book[prop];
+        case 'id':
+          newFieldElem.classList.add('book-id');
+          newFieldElem.textContent = book[prop];
+          break;
+        case 'hasRead':
+          newFieldElem.textContent = 'Read?';
+          newFieldElem.append(createReadToggle(book));
+          break;
+        default:
+          newFieldElem.textContent = prop + ': ' + book[prop];
+          break;
       }
-      else newFieldElem.textContent = prop + ': ' + book[prop];
 
       return newFieldElem;
     }
 
     const fieldElems = Object.keys(book).map(prop => createFieldElem(prop));
     return fieldElems;
+  }
+
+  function createReadToggle(book) {
+    const toggleElem = document.createElement('input');
+    toggleElem.id = 'read-' + book.id;
+    toggleElem.type = 'checkbox';
+    toggleElem.value = book.id;
+    toggleElem.checked = book.hasRead;
+
+    return toggleElem;
   }
 
   function createRemoveButton(book) {
@@ -121,6 +152,8 @@
     bookElem.setAttribute('id', 'book-' + book.id);
     bookElem.classList.add('book');
 
+    if (book.hasRead) bookElem.classList.add('read');
+
     const fieldElems = createFieldElems(book);
     fieldElems.forEach(elem => bookElem.append(elem));
 
@@ -136,12 +169,20 @@
     }, { once: true });
   }
 
+  function addReadToggleEventListener(bookId) {
+    const check = document.querySelector('#read-' + bookId);
+    check.addEventListener('click', (evt) => {
+      toggleReadStatus(evt);
+    })
+  }
+
   function addBooksToDisplay() {
     const booksToAdd = library().filter(book => !booksOnDisplayById().includes(book.id));
 
     booksToAdd.forEach(book => {
       shelves.prepend(createBookElem(book));
       addRemoveEventListener(book.id);
+      addReadToggleEventListener(book.id);
     });
   }
 
@@ -164,6 +205,18 @@
     style.display === 'block'
       ? style.display = 'none'
       : style.display = 'block';
+  }
+
+  function toggleReadStatus(evt) {
+    const toggleElem = evt.target;
+    const bookId = toggleElem.value;
+    const bookElem = document.querySelector('#book-' + bookId);
+
+    updateBookInLib(bookId);
+
+    toggleElem.checked
+      ? bookElem.classList.add('read')
+      : bookElem.classList.remove('read');
   }
 
   displayBooks();

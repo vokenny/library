@@ -39,3 +39,7 @@ html {
 .book-id {
   display: none;
 }
+
+.read {
+  background-color: turquoise;
+}
