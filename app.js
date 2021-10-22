@@ -27,6 +27,20 @@
     this.hasRead = hasRead;
   }
 
+  function isValidTitle(titleElem) {
+    const value = titleElem.value;
+
+    return value && value.length <= 120;
+  }
+
+  function validateForm(evt) {
+    const formElems = evt.target.elements;
+
+    isValidTitle(formElems.title)
+    // isValidAuthor(formElems.author)
+    // isValidPages(formElems.pages)
+  }
+
   function addBookToLib(evt) {
     const formElems = evt.target.elements;
     const newBook = Object.create(Book);
@@ -49,20 +63,43 @@
     localStorage.setItem('library', JSON.stringify(newLibrary));
   }
 
+  function createFieldElems(book) {
+    function createFieldElem(prop) {
+      const newFieldElem = document.createElement('p');
+
+      if (prop === 'id')
+      {
+        newFieldElem.classList.add('book-id');
+        newFieldElem.textContent = book[prop];
+      }
+      else newFieldElem.textContent = prop + ': ' + book[prop];
+
+      return newFieldElem;
+    }
+
+    const fieldElems = Object.keys(book).map(prop => createFieldElem(prop));
+    return fieldElems;
+  }
+
+  function createRemoveButton(book) {
+    const removeButtonElem = document.createElement('button');
+    removeButtonElem.id = 'remove-' + book.id;
+    removeButtonElem.classList.add(['button', 'secondary', 'remove']);
+    removeButtonElem.value = book.id;
+    removeButtonElem.textContent = 'Remove';
+
+    return removeButtonElem;
+  }
+
   function createBookElem(book) {
     const bookElem = document.createElement('div');
     bookElem.setAttribute('id', 'book-' + book.id);
     bookElem.classList.add('book');
 
-    for (let prop in book)
-    {
-      prop === 'id'
-        ? bookElem.innerHTML += `<p class="book-id">${ book[prop] }</p>`
-        : bookElem.innerHTML += `<p>${ prop }: ${ book[prop] }</p>`
-    }
+    const fieldElems = createFieldElems(book);
+    fieldElems.forEach(elem => bookElem.append(elem));
 
-    bookElem.innerHTML += `<button id="remove-${ book.id }" class="button secondary remove" value="${ book.id }">Remove</button>`;
-
+    bookElem.append(createRemoveButton(book));
     return bookElem;
   }
 
@@ -98,9 +135,10 @@
   }
 
   function toggleNewBookForm() {
-    newBookContainer.style.display === 'block'
-      ? newBookContainer.style.display = 'none'
-      : newBookContainer.style.display = 'block';
+    const style = newBookContainer.style;
+    style.display === 'block'
+      ? style.display = 'none'
+      : style.display = 'block';
   }
 
   displayBooks();
@@ -108,6 +146,7 @@
   newBookExpander.addEventListener('click', toggleNewBookForm);
   newBookForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
+    validateForm(evt);
     addBookToLib(evt);
     displayBooks();
   });
