@@ -6,6 +6,7 @@
   const newBookContainer = document.querySelector('#new-book-container');
   const newBookForm = document.querySelector('#new-book-form');
   const matchingBookError = document.querySelector('#matching-book-error');
+  const cancelButton = document.querySelector('#cancel-new-book');
   const shelves = document.querySelector('#shelves');
   const bookIds = () => document.querySelectorAll('.book-id');
 
@@ -225,11 +226,11 @@
   }
 
   function toggleNewBookForm() {
-    const classes = newBookForm.classList;
+    const classes = newBookContainer.classList;
 
     classes.contains('hidden')
-      ? newBookForm.classList.remove('hidden')
-      : newBookForm.classList.add('hidden');
+      ? newBookContainer.classList.remove('hidden')
+      : newBookContainer.classList.add('hidden');
   }
 
   function toggleReadStatus(evt) {
@@ -244,12 +245,15 @@
       : bookElem.classList.remove('read');
   }
 
-  displayBooks();
 
   newBookExpander.addEventListener('click', toggleNewBookForm);
+  cancelButton.addEventListener('click', toggleNewBookForm);
+
   newBookForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     validateForm(evt);
     displayBooks();
   });
+
+  displayBooks();
 }());
