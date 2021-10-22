@@ -5,6 +5,7 @@
   const newBookExpander = document.querySelector('#new-book-button');
   const newBookContainer = document.querySelector('#new-book-container');
   const newBookForm = document.querySelector('#new-book-form');
+  const matchingBookError = document.querySelector('#matching-book-error');
   const shelves = document.querySelector('#shelves');
   const bookIds = () => document.querySelectorAll('.book-id');
 
@@ -53,14 +54,37 @@
     return parseInt(value).toFixed(0);
   }
 
+  function isUniqueBook(formElems) {
+    const title = formElems.title.value;
+    const author = formElems.author.value;
+    const pages = formatPages(formElems.pages.value);
+
+    const hasMatchingBook = library().some(book =>
+      book.title === title &&
+      book.author === author &&
+      book.pages === pages
+    )
+
+    if (hasMatchingBook) matchingBookError.classList.remove('hidden');
+
+    return !hasMatchingBook;
+  }
+
+  function clearErrorsOnForm(formElems) {
+    Array.from(formElems).forEach(elem => elem.classList.remove('invalid'));
+    matchingBookError.classList.add('hidden');
+  }
+
   function validateForm(evt) {
     const formElems = evt.target.elements;
-    Array.from(formElems).forEach(elem => elem.classList.remove('invalid'));
+
+    clearErrorsOnForm(formElems);
 
     if (
       isValidTitle(formElems.title) &&
       isValidAuthor(formElems.author) &&
-      isValidPages(formElems.pages)
+      isValidPages(formElems.pages) &&
+      isUniqueBook(formElems)
     )
     {
       addBookToLib(formElems)
@@ -201,10 +225,11 @@
   }
 
   function toggleNewBookForm() {
-    const style = newBookContainer.style;
-    style.display === 'block'
-      ? style.display = 'none'
-      : style.display = 'block';
+    const classes = newBookForm.classList;
+
+    classes.contains('hidden')
+      ? newBookForm.classList.remove('hidden')
+      : newBookForm.classList.add('hidden');
   }
 
   function toggleReadStatus(evt) {

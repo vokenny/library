@@ -22,7 +22,9 @@
 
       <button type="button" id="new-book-button">Add new book to the library</button>
       <div id="new-book-container">
-        <form id="new-book-form" action="" novalidate>
+        <p id="matching-book-error" class="error hidden">This book already exists in the library</p>
+
+        <form id="new-book-form" class="hidden" action="" novalidate>
           <div>
             <label for="title-input">Title</label>
             <input id="title-input" name="title" type="text" maxlength="120" required />

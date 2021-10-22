@@ -20,8 +20,8 @@ html {
   font-size: 15px;
 }
 
-#new-book-container {
-  display: none;
+.hidden {
+  display: none !important;
 }
 
 .invalid {
