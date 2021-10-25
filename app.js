@@ -105,6 +105,13 @@
     matchingBookError.classList.add('hidden');
   }
 
+  function resetForm (formElems) {
+    formElems.title.value = '';
+    formElems.author.value = '';
+    formElems.pages.value = '';
+    formElems['has-read'].checked = false;
+  }
+
   function validateForm (evt) {
     const formElems = evt.target.elements;
     const titleElem = formElems.title;
@@ -133,7 +140,8 @@
           authorElem.value,
           pagesElem.value,
           hasReadElem.checked
-        )
+        );
+        resetForm(formElems);
     }
   }
 
