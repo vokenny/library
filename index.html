@@ -1,59 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Library</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library</title>
 
-  <link rel="stylesheet" href="./styles.css" />
-  <script defer src="./app.js"></script>
-</head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&family=Rampart+One&display=swap" rel="stylesheet">
 
-<body>
-  <main>
-    <header>
-      <h1 id="title">Get chu sum NOLLIDGE</h1>
-    </header>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
+  </head>
 
-    <section id="library">
-      <h2>Library</h2>
+  <body>
+    <main>
+      <header>
+        <h1 id="title">Get chu sum NOLLIDGE</h1>
+      </header>
 
-      <button type="button" id="new-book-button">Add new book to the library</button>
-      <div id="new-book-container" class="hidden">
-        <p id="matching-book-error" class="error hidden">This book already exists in the library</p>
+      <section id="library">
+        <h2>Library</h2>
 
-        <form id="new-book-form" action="" novalidate>
-          <div>
-            <label for="title-input">Title</label>
-            <input id="title-input" name="title" type="text" maxlength="120" required />
-          </div>
+        <details id="new-book-container" class="glass">
+          <summary id="new-book-button">
+            Add new book to the library
+          </summary>
 
-          <div>
-            <label for="author-input">Author</label>
-            <input id="author-input" name="author" type="text" maxlength="120" required />
-          </div>
+          <form id="new-book-form" action="" novalidate>
+            <p id="matching-book-error" class="error hidden">This book already exists in the library</p>
 
-          <div>
-            <!-- See https://en.wikipedia.org/wiki/List_of_longest_novels for max number of pages -->
-            <label for="pages-input">Number of pages</label>
-            <input id="pages-input" name="pages" type="number" min="1" step="1" max="25000" required />
-          </div>
+            <div>
+              <label for="title-input">Title</label>
+              <input id="title-input" name="title" type="text" class="form-input" maxlength="100" required />
+            </div>
 
-          <div>
-            <label for="has-read-check">Have you read it?</label>
-            <input id="has-read-check" name="has-read" type="checkbox" value="has-read" />
-          </div>
+            <div>
+              <label for="author-input">Author</label>
+              <input id="author-input" name="author" type="text" class="form-input" maxlength="100" required />
+            </div>
 
-          <button id="add-new-book" class="button primary" type="submit">Add new book</button>
-          <button id="cancel-new-book" class="button secondary" type="button">Cancel</button>
-        </form>
-      </div>
+            <div>
+              <!-- See https://en.wikipedia.org/wiki/List_of_longest_novels for max number of pages -->
+              <label for="pages-input">Number of pages</label>
+              <input id="pages-input" name="pages" type="number" class="form-input" min="1" step="1" max="25000"
+                required />
+            </div>
 
-      <div id="shelves"></div>
-    </section>
-  </main>
-</body>
+            <div>
+              <label for="has-read-check">Have you read it?</label>
+              <input id="has-read-check" name="has-read" type="checkbox" class="form-input" value="has-read" />
+            </div>
+
+            <button id="add-new-book" class="button primary" type="submit">Add new book</button>
+          </form>
+        </details>
+
+        <div id="shelves"></div>
+      </section>
+    </main>
+  </body>
 
 </html>

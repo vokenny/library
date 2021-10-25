@@ -1,5 +1,12 @@
+:root {
+  --bg: rgb(93, 181, 216);
+  --pos-action: #60d394;
+  --neg-action: #dd3a3a;
+}
+
 * {
   box-sizing: border-box;
+  font-family: 'Merriweather', serif;
 }
 
 html {
@@ -8,16 +15,61 @@ html {
   padding: 0;
 }
 
-#new-book-button {
-  background-color: #eee;
-  color: #444;
+body {
+  background-color: var(--bg);
+}
+
+#title{
+  font-family: 'Rampart One', cursive;
+  text-align: center;
+}
+
+#new-book-container {
+  overflow: hidden;
+}
+
+.button {
   cursor: pointer;
-  padding: 18px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.button:hover {
+  border: 1px solid rgba(255, 255, 255, 1);
+}
+
+#new-book-button {
+  padding: 20px;
   width: 100%;
   border: none;
   text-align: left;
-  outline: none;
-  font-size: 15px;
+}
+
+#new-book-form {
+  padding: 25px 25px 0;
+}
+
+#new-book-form > * {
+  margin-bottom: 20px;
+}
+
+#matching-book-error {
+  color: var(--neg-action);
+  margin-top: 0;
+}
+
+.glass {
+  background: rgba( 255, 255, 255, 0.25 );
+  box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+  backdrop-filter: blur( 4px );
+  -webkit-backdrop-filter: blur( 4px );
+  border-radius: 10px;
+  border: 1px solid rgba( 255, 255, 255, 0.18 );
+}
+
+#add-new-book {
+  background-color: var(--pos-action);
 }
 
 .hidden {
@@ -28,14 +80,81 @@ html {
   border-color: red;
 }
 
+.form-input {
+  display: block;
+  width: 100%;
+  max-width: 500px;
+  height: 40px;
+  margin: 10px 0 20px;
+  border-radius: 8px;
+  font-size: 1.25em;
+  padding: 10px;
+}
+
+#pages-input {
+  max-width: 250px;
+}
+
+label[for="has-read-check"]:hover {
+  cursor: pointer;
+}
+
+[type=checkbox] {
+  margin-left: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+#has-read-check {
+  display: inline;
+}
+
 .book {
   width: 100%;
   height: auto;
-  border: 1px solid navy;
-  margin: 5px 0;
-  padding: 0 10px 10px;
+  margin: 30px 0;
+  padding: 10px 25px 0;
+  font-size: 1.1em;
+  word-wrap: anywhere;
+}
+
+.book > * {
+  margin-bottom: 20px;
 }
 
 .read {
-  background-color: turquoise;
+  background: rgba(115, 255, 0, 0.25);
+}
+
+.remove {
+  background-color: var(--neg-action);
+  color: azure;
+}
+
+#shelves {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+}
+
+@media screen and (min-width: 1024px) {
+  #library {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80vw;
+    margin: auto;
+  }
+
+  #new-book-container {
+    width: 75vw;
+    max-width: 800px;
+  }
+
+
+  .book {
+    width: 100%;
+    max-width: 400px;
+  }
 }

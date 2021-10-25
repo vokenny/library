@@ -2,15 +2,14 @@
   'use strict';
 
   /* DOCUMENT SELECTORS */
-  const newBookExpander = document.querySelector('#new-book-button');
-  const newBookContainer = document.querySelector('#new-book-container');
   const newBookForm = document.querySelector('#new-book-form');
   const matchingBookError = document.querySelector('#matching-book-error');
-  const cancelButton = document.querySelector('#cancel-new-book');
   const shelves = document.querySelector('#shelves');
   const bookIds = () => document.querySelectorAll('.book-id');
 
   const booksOnDisplayById = () => Array.from(bookIds(), id => id.textContent);
+
+  const MAX_LEN = 100;
 
   const Book = {
     toggleRead: function () {
@@ -81,9 +80,9 @@
     return uuid.toString();
   }
 
-  const isValidTitle = (title) => title && title.length <= 120;
+  const isValidTitle = (title) => title && title.length <= MAX_LEN;
 
-  const isValidAuthor = (author) => author && author.length <= 120;
+  const isValidAuthor = (author) => author && author.length <= MAX_LEN;
 
   const isValidPages = (pages) => {
     const value = parseInt(pages);
@@ -138,6 +137,10 @@
     }
   }
 
+  function capitalise (str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
   function createFieldElems (book) {
     function createFieldElem (prop) {
       const newFieldElem = document.createElement('p');
@@ -152,7 +155,7 @@
           newFieldElem.append(createReadToggle(book));
           break;
         default:
-          newFieldElem.textContent = prop + ': ' + book[prop];
+          newFieldElem.textContent = capitalise(prop) + ': ' + book[prop];
           break;
       }
 
@@ -176,7 +179,7 @@
   function createRemoveButton (book) {
     const removeButtonElem = document.createElement('button');
     removeButtonElem.id = 'remove-' + book.id;
-    removeButtonElem.classList.add(['button', 'secondary', 'remove']);
+    removeButtonElem.classList.add('button', 'remove');
     removeButtonElem.value = book.id;
     removeButtonElem.textContent = 'Remove';
 
@@ -186,7 +189,7 @@
   function createBookElem (book) {
     const bookElem = document.createElement('div');
     bookElem.setAttribute('id', 'book-' + book.id);
-    bookElem.classList.add('book');
+    bookElem.classList.add('book', 'glass');
 
     if (book.hasRead) bookElem.classList.add('read');
 
@@ -241,14 +244,6 @@
     if (shelfLength > libLength) removeBooksFromShelves();
   }
 
-  function toggleNewBookForm () {
-    const classes = newBookContainer.classList;
-
-    classes.contains('hidden')
-      ? newBookContainer.classList.remove('hidden')
-      : newBookContainer.classList.add('hidden');
-  }
-
   function toggleReadStatus (evt) {
     const toggleElem = evt.target;
     const bookId = toggleElem.value;
@@ -260,9 +255,6 @@
       ? bookElem.classList.add('read')
       : bookElem.classList.remove('read');
   }
-
-  newBookExpander.addEventListener('click', toggleNewBookForm);
-  cancelButton.addEventListener('click', toggleNewBookForm);
 
   newBookForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
