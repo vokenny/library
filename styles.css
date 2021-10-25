@@ -21,7 +21,7 @@ html {
 }
 
 .hidden {
-  display: none !important;
+  display: none;
 }
 
 .invalid {
@@ -34,10 +34,6 @@ html {
   border: 1px solid navy;
   margin: 5px 0;
   padding: 0 10px 10px;
-}
-
-.book-id {
-  display: none;
 }
 
 .read {

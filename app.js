@@ -12,128 +12,139 @@
 
   const booksOnDisplayById = () => Array.from(bookIds(), id => id.textContent);
 
-  const library = () => localStorage.getItem('library') ? JSON.parse(localStorage.getItem('library')) : [];
+  const Book = {
+    toggleRead: function () {
+      this.hasRead = !this.hasRead;
+    }
+  }
 
-  function generateBookID() {
+  const Library = {
+    getBooks: function () {
+      const booksData = localStorage.getItem('library') ? JSON.parse(localStorage.getItem('library')) : [];
+
+      return booksData.map(bookData => {
+        const book = Object.create(Book);
+        book.id = bookData.id;
+        book.title = bookData.title;
+        book.author = bookData.author;
+        book.pages = bookData.pages;
+        book.hasRead = bookData.hasRead;
+
+        return book
+      });
+    },
+
+    getBookById: function (id) {
+      return this.getBooks().find(book => book.id === id);
+    },
+
+    addBook: function (title, author, pages, hasRead) {
+      const newBook = Object.create(Book);
+      newBook.id = generateBookID();
+      newBook.title = title;
+      newBook.author = author;
+      newBook.pages = formatPages(pages);
+      newBook.hasRead = hasRead;
+
+      const newLibrary = [...this.getBooks(), newBook];
+      localStorage.setItem('library', JSON.stringify(newLibrary));
+    },
+
+    removeBook: function (id) {
+      const newLibrary = [...this.getBooks().filter(book => book.id !== id)];
+      localStorage.setItem('library', JSON.stringify(newLibrary));
+    },
+
+    toggleReadOnBook: function (id) {
+      const toggleBook = this.getBookById(id);
+      toggleBook.toggleRead();
+
+      const newLibrary = this.getBooks().map(book => book.id === toggleBook.id ? toggleBook : book);
+      localStorage.setItem('library', JSON.stringify(newLibrary));
+    },
+
+    hasMatchingBook: function (title, author, pages) {
+      return this.getBooks().some(book =>
+        book.title === title &&
+        book.author === author &&
+        book.pages === pages
+      )
+    },
+  }
+
+  const lib = Object.create(Library);
+
+  function generateBookID () {
     const array = new Uint32Array(1);
     const uuid = window.crypto.getRandomValues(array)[0];
 
     return uuid.toString();
   }
 
-  function Book(id, title, author, pages, hasRead) {
-    this.id = id;
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.hasRead = hasRead;
-  }
+  const isValidTitle = (title) => title && title.length <= 120;
 
-  function isValidTitle(titleElem) {
-    const value = titleElem.value;
-    if (!value || value?.length > 120) titleElem.classList.add('invalid');
+  const isValidAuthor = (author) => author && author.length <= 120;
 
-    return value && value.length <= 120;
-  }
-
-  function isValidAuthor(authorElem) {
-    const value = authorElem.value;
-    if (!value || value?.length > 120) authorElem.classList.add('invalid');
-
-    return value && value.length <= 120;
-  }
-
-  function isValidPages(pagesElem) {
-    const value = parseInt(pagesElem.value);
-    if (!(value > 0 && value <= 25000)) pagesElem.classList.add('invalid');
-
+  const isValidPages = (pages) => {
+    const value = parseInt(pages);
     // See https://en.wikipedia.org/wiki/List_of_longest_novels for max number of pages
     return value > 0 && value <= 25000;
   }
 
-  function formatPages(value) {
-    return parseInt(value).toFixed(0);
-  }
+  const formatPages = (value) => parseInt(value).toFixed(0);
 
-  function isUniqueBook(formElems) {
+  function isUniqueBook (formElems) {
     const title = formElems.title.value;
     const author = formElems.author.value;
     const pages = formatPages(formElems.pages.value);
 
-    const hasMatchingBook = library().some(book =>
-      book.title === title &&
-      book.author === author &&
-      book.pages === pages
-    )
-
-    if (hasMatchingBook) matchingBookError.classList.remove('hidden');
-
-    return !hasMatchingBook;
+    return !lib.hasMatchingBook(title, author, pages);
   }
 
-  function clearErrorsOnForm(formElems) {
+  function clearErrorsOnForm (formElems) {
     Array.from(formElems).forEach(elem => elem.classList.remove('invalid'));
     matchingBookError.classList.add('hidden');
   }
 
-  function validateForm(evt) {
+  function validateForm (evt) {
     const formElems = evt.target.elements;
+    const titleElem = formElems.title;
+    const authorElem = formElems.author;
+    const pagesElem = formElems.pages;
+    const hasReadElem = formElems['has-read'];
 
     clearErrorsOnForm(formElems);
 
-    if (
-      isValidTitle(formElems.title) &&
-      isValidAuthor(formElems.author) &&
-      isValidPages(formElems.pages) &&
-      isUniqueBook(formElems)
-    )
-    {
-      addBookToLib(formElems)
+    switch (true) {
+      case !isValidTitle(titleElem.value):
+        titleElem.classList.add('invalid');
+        break;
+      case !isValidAuthor(authorElem.value):
+        authorElem.classList.add('invalid');
+        break;
+      case !isValidPages(pagesElem.value):
+        pagesElem.classList.add('invalid');
+        break;
+      case !isUniqueBook(formElems):
+        matchingBookError.classList.remove('hidden');
+        break;
+      default:
+        lib.addBook(
+          titleElem.value,
+          authorElem.value,
+          pagesElem.value,
+          hasReadElem.checked
+        )
     }
   }
 
-  function addBookToLib(formElems) {
-    const newBook = Object.create(Book);
-
-    newBook.id = generateBookID();
-    newBook.title = formElems.title.value;
-    newBook.author = formElems.author.value;
-    newBook.pages = formatPages(formElems.pages.value);
-    newBook.hasRead = formElems['has-read'].checked;
-
-    const newLibrary = [...library(), newBook];
-
-    localStorage.setItem('library', JSON.stringify(newLibrary));
-  }
-
-  function updateBookInLib(id) {
-    const newLibrary = library().map(book => {
-      return book.id === id
-        ? {
-          ...book,
-          hasRead: !book.hasRead
-        }
-        : book;
-    });
-
-    localStorage.setItem('library', JSON.stringify(newLibrary));
-  }
-
-  function removeBookFromLib(evt) {
-    const bookId = evt.target.value;
-    const newLibrary = [...library().filter(book => book.id !== bookId)];
-
-    localStorage.setItem('library', JSON.stringify(newLibrary));
-  }
-
-  function createFieldElems(book) {
-    function createFieldElem(prop) {
+  function createFieldElems (book) {
+    function createFieldElem (prop) {
       const newFieldElem = document.createElement('p');
 
-      switch (prop)
-      {
+      switch (prop) {
         case 'id':
-          newFieldElem.classList.add('book-id');
+          newFieldElem.classList.add('book-id', 'hidden');
           newFieldElem.textContent = book[prop];
           break;
         case 'hasRead':
@@ -152,7 +163,7 @@
     return fieldElems;
   }
 
-  function createReadToggle(book) {
+  function createReadToggle (book) {
     const toggleElem = document.createElement('input');
     toggleElem.id = 'read-' + book.id;
     toggleElem.type = 'checkbox';
@@ -162,7 +173,7 @@
     return toggleElem;
   }
 
-  function createRemoveButton(book) {
+  function createRemoveButton (book) {
     const removeButtonElem = document.createElement('button');
     removeButtonElem.id = 'remove-' + book.id;
     removeButtonElem.classList.add(['button', 'secondary', 'remove']);
@@ -172,7 +183,7 @@
     return removeButtonElem;
   }
 
-  function createBookElem(book) {
+  function createBookElem (book) {
     const bookElem = document.createElement('div');
     bookElem.setAttribute('id', 'book-' + book.id);
     bookElem.classList.add('book');
@@ -186,23 +197,23 @@
     return bookElem;
   }
 
-  function addRemoveEventListener(bookId) {
+  function addRemoveEventListener (bookId) {
     const button = document.querySelector('#remove-' + bookId);
     button.addEventListener('click', (evt) => {
-      removeBookFromLib(evt);
+      lib.removeBook(evt.target.value);
       displayBooks();
     }, { once: true });
   }
 
-  function addReadToggleEventListener(bookId) {
+  function addReadToggleEventListener (bookId) {
     const check = document.querySelector('#read-' + bookId);
     check.addEventListener('click', (evt) => {
       toggleReadStatus(evt);
     })
   }
 
-  function addBooksToDisplay() {
-    const booksToAdd = library().filter(book => !booksOnDisplayById().includes(book.id));
+  function addBooksToShelves () {
+    const booksToAdd = lib.getBooks().filter(book => !booksOnDisplayById().includes(book.id));
 
     booksToAdd.forEach(book => {
       shelves.prepend(createBookElem(book));
@@ -211,8 +222,8 @@
     });
   }
 
-  function removeBooksFromDisplay() {
-    const bookIdsToRemove = booksOnDisplayById().filter(id => !library().map(book => book.id).includes(id));
+  function removeBooksFromShelves () {
+    const bookIdsToRemove = booksOnDisplayById().filter(id => !lib.getBooks().map(book => book.id).includes(id));
 
     bookIdsToRemove.forEach(id => {
       const bookElem = document.querySelector('#book-' + id);
@@ -220,12 +231,15 @@
     })
   }
 
-  function displayBooks() {
-    if (bookIds().length < library().length) addBooksToDisplay();
-    if (bookIds().length > library().length) removeBooksFromDisplay();
+  function displayBooks () {
+    const shelfLength = bookIds().length;
+    const libLength = lib.getBooks().length;
+
+    if (shelfLength < libLength) addBooksToShelves();
+    if (shelfLength > libLength) removeBooksFromShelves();
   }
 
-  function toggleNewBookForm() {
+  function toggleNewBookForm () {
     const classes = newBookContainer.classList;
 
     classes.contains('hidden')
@@ -233,18 +247,17 @@
       : newBookContainer.classList.add('hidden');
   }
 
-  function toggleReadStatus(evt) {
+  function toggleReadStatus (evt) {
     const toggleElem = evt.target;
     const bookId = toggleElem.value;
     const bookElem = document.querySelector('#book-' + bookId);
 
-    updateBookInLib(bookId);
+    lib.toggleReadOnBook(bookId);
 
     toggleElem.checked
       ? bookElem.classList.add('read')
       : bookElem.classList.remove('read');
   }
-
 
   newBookExpander.addEventListener('click', toggleNewBookForm);
   cancelButton.addEventListener('click', toggleNewBookForm);
