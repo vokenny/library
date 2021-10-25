@@ -235,6 +235,8 @@
     const shelfLength = bookIds().length;
     const libLength = lib.getBooks().length;
 
+    // Designed it this way to avoid re-rendering the whole library for each change
+    // It only adds or removes the specific book within the respective functions
     if (shelfLength < libLength) addBooksToShelves();
     if (shelfLength > libLength) removeBooksFromShelves();
   }
