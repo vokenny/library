@@ -64,8 +64,8 @@
 
     hasMatchingBook: function (title, author, pages) {
       return this.getBooks().some(book =>
-        book.title === title &&
-        book.author === author &&
+        book.title.toLowerCase() === title.toLowerCase() &&
+        book.author.toLowerCase() === author.toLowerCase() &&
         book.pages === pages
       )
     },
@@ -73,7 +73,7 @@
 
   const lib = Object.create(Library);
 
-  function generateBookID () {
+  function generateBookID() {
     const array = new Uint32Array(1);
     const uuid = window.crypto.getRandomValues(array)[0];
 
@@ -92,7 +92,7 @@
 
   const formatPages = (value) => parseInt(value).toFixed(0);
 
-  function isUniqueBook (formElems) {
+  function isUniqueBook(formElems) {
     const title = formElems.title.value;
     const author = formElems.author.value;
     const pages = formatPages(formElems.pages.value);
@@ -100,19 +100,19 @@
     return !lib.hasMatchingBook(title, author, pages);
   }
 
-  function clearErrorsOnForm (formElems) {
+  function clearErrorsOnForm(formElems) {
     Array.from(formElems).forEach(elem => elem.classList.remove('invalid'));
     matchingBookError.classList.add('hidden');
   }
 
-  function resetForm (formElems) {
+  function resetForm(formElems) {
     formElems.title.value = '';
     formElems.author.value = '';
     formElems.pages.value = '';
     formElems['has-read'].checked = false;
   }
 
-  function validateForm (evt) {
+  function validateForm(evt) {
     const formElems = evt.target.elements;
     const titleElem = formElems.title;
     const authorElem = formElems.author;
@@ -145,12 +145,12 @@
     }
   }
 
-  function capitalise (str) {
+  function capitalise(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  function createFieldElems (book) {
-    function createFieldElem (prop) {
+  function createFieldElems(book) {
+    function createFieldElem(prop) {
       const newFieldElem = document.createElement('p');
 
       switch (prop) {
@@ -174,7 +174,7 @@
     return fieldElems;
   }
 
-  function createReadToggle (book) {
+  function createReadToggle(book) {
     const toggleElem = document.createElement('input');
     toggleElem.id = 'read-' + book.id;
     toggleElem.type = 'checkbox';
@@ -184,7 +184,7 @@
     return toggleElem;
   }
 
-  function createRemoveButton (book) {
+  function createRemoveButton(book) {
     const removeButtonElem = document.createElement('button');
     removeButtonElem.id = 'remove-' + book.id;
     removeButtonElem.classList.add('button', 'remove');
@@ -194,7 +194,7 @@
     return removeButtonElem;
   }
 
-  function createBookElem (book) {
+  function createBookElem(book) {
     const bookElem = document.createElement('div');
     bookElem.setAttribute('id', 'book-' + book.id);
     bookElem.classList.add('book', 'glass');
@@ -208,7 +208,7 @@
     return bookElem;
   }
 
-  function addRemoveEventListener (bookId) {
+  function addRemoveEventListener(bookId) {
     const button = document.querySelector('#remove-' + bookId);
     button.addEventListener('click', (evt) => {
       lib.removeBook(evt.target.value);
@@ -216,14 +216,14 @@
     }, { once: true });
   }
 
-  function addReadToggleEventListener (bookId) {
+  function addReadToggleEventListener(bookId) {
     const check = document.querySelector('#read-' + bookId);
     check.addEventListener('click', (evt) => {
       toggleReadStatus(evt);
     })
   }
 
-  function addBooksToShelves () {
+  function addBooksToShelves() {
     const booksToAdd = lib.getBooks().filter(book => !booksOnDisplayById().includes(book.id));
 
     booksToAdd.forEach(book => {
@@ -233,7 +233,7 @@
     });
   }
 
-  function removeBooksFromShelves () {
+  function removeBooksFromShelves() {
     const bookIdsToRemove = booksOnDisplayById().filter(id => !lib.getBooks().map(book => book.id).includes(id));
 
     bookIdsToRemove.forEach(id => {
@@ -242,7 +242,7 @@
     })
   }
 
-  function displayBooks () {
+  function displayBooks() {
     const shelfLength = bookIds().length;
     const libLength = lib.getBooks().length;
 
@@ -252,7 +252,7 @@
     if (shelfLength > libLength) removeBooksFromShelves();
   }
 
-  function toggleReadStatus (evt) {
+  function toggleReadStatus(evt) {
     const toggleElem = evt.target;
     const bookId = toggleElem.value;
     const bookElem = document.querySelector('#book-' + bookId);
