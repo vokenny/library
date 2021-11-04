@@ -10,68 +10,61 @@
   const booksOnDisplayById = () => Array.from(bookIds(), id => id.textContent);
 
   const MAX_LEN = 100;
+  class Book {
+    constructor(args) {
+      for (let prop in args) {
+        this[prop] = args[prop];
+      }
+    }
 
-  const Book = {
-    toggleRead: function () {
+    toggleRead() {
       this.hasRead = !this.hasRead;
     }
   }
 
-  const Library = {
-    getBooks: function () {
+  class Library {
+    constructor() { }
+
+    getBooks() {
       const booksData = localStorage.getItem('library') ? JSON.parse(localStorage.getItem('library')) : [];
+      return booksData.map(bookData => new Book(bookData));
+    }
 
-      return booksData.map(bookData => {
-        const book = Object.create(Book);
-        book.id = bookData.id;
-        book.title = bookData.title;
-        book.author = bookData.author;
-        book.pages = bookData.pages;
-        book.hasRead = bookData.hasRead;
-
-        return book
-      });
-    },
-
-    getBookById: function (id) {
+    getBookById(id) {
       return this.getBooks().find(book => book.id === id);
-    },
+    }
 
-    addBook: function (title, author, pages, hasRead) {
-      const newBook = Object.create(Book);
-      newBook.id = generateBookID();
-      newBook.title = title;
-      newBook.author = author;
-      newBook.pages = formatPages(pages);
-      newBook.hasRead = hasRead;
-
+    addBook(title, author, pageNum, hasRead) {
+      const id = generateBookID();
+      const pages = formatPages(pageNum);
+      const newBook = new Book({ id, title, author, pages, hasRead });
       const newLibrary = [...this.getBooks(), newBook];
       localStorage.setItem('library', JSON.stringify(newLibrary));
-    },
+    }
 
-    removeBook: function (id) {
+    removeBook(id) {
       const newLibrary = [...this.getBooks().filter(book => book.id !== id)];
       localStorage.setItem('library', JSON.stringify(newLibrary));
-    },
+    }
 
-    toggleReadOnBook: function (id) {
+    toggleReadOnBook(id) {
       const toggleBook = this.getBookById(id);
       toggleBook.toggleRead();
 
       const newLibrary = this.getBooks().map(book => book.id === toggleBook.id ? toggleBook : book);
       localStorage.setItem('library', JSON.stringify(newLibrary));
-    },
+    }
 
-    hasMatchingBook: function (title, author, pages) {
+    hasMatchingBook(title, author, pages) {
       return this.getBooks().some(book =>
         book.title.toLowerCase() === title.toLowerCase() &&
         book.author.toLowerCase() === author.toLowerCase() &&
         book.pages === pages
       )
-    },
+    }
   }
 
-  const lib = Object.create(Library);
+  const lib = new Library();
 
   function generateBookID() {
     const array = new Uint32Array(1);
@@ -145,9 +138,7 @@
     }
   }
 
-  function capitalise(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
+  const capitalise = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
   function createFieldElems(book) {
     function createFieldElem(prop) {
